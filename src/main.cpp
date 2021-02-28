@@ -51,54 +51,82 @@ digitalWrite(blue, 0);
 void loop() { 
   // put your main code here, to run repeatedly:
 
-byte red1[] = {1, 2, 4, 8, 16, 32, 64, 128, 128, 64, 32, 16, 8, 4, 2, 1};
-byte green1[] = {2, 4, 8, 16, 32, 64, 128, 128, 64, 32, 16, 8, 4, 2, 1, 2};
-byte blue1[] = {4, 8, 16, 32, 64, 128, 128, 64, 32, 16, 8, 4, 2, 1, 2 ,4};
+//byte red1[] = {1, 2, 4, 8, 16, 32, 64, 128, 128, 64, 32, 16, 8, 4, 2, 1};
+//byte green1[] = {2, 4, 8, 16, 32, 64, 128, 128, 64, 32, 16, 8, 4, 2, 1, 2};
+//byte blue1[] = {4, 8, 16, 32, 64, 128, 128, 64, 32, 16, 8, 4, 2, 1, 2 ,4};
+
+byte red1[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+byte green1[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+byte blue1[] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
 
 while(1) {
 
 digitalWrite(clock, 0);
 digitalWrite(latch, 0);
-digitalWrite(outen, 0);
+digitalWrite(outen, 1);
+
+int z = 0;
+
+do {
+
+if ((z & 0x01) == false) digitalWrite(Line_A, 0);
+else digitalWrite(Line_A, 1);
+
+if ((z & 0x02) == false) digitalWrite(Line_B, 0);
+else digitalWrite(Line_B, 1);
+
+if ((z & 0x04) == false) digitalWrite(Line_C, 0);
+else digitalWrite(Line_C, 1);
+
+if ((z & 0x08) == false) digitalWrite(Line_D, 0);
+else digitalWrite(Line_D, 1);  
+
+delay(1);
 
 int x = 0;
 
 do  {
 
-int y = 0;
+int y = 1;
 
 do  {
 
-if (bitRead(red1[x], y )) digitalWrite(red, 1);
-else digitalWrite(red, 0);
+if ((red1[x] & y ) == false) digitalWrite(red, 0);
+else digitalWrite(red, 1);
 
-if (bitRead(green1[x], y )) digitalWrite(green, 1);
-else digitalWrite(green, 0);
+if ((green1[x] & y ) == false) digitalWrite(green, 0);
+else digitalWrite(green, 1);
 
-if (bitRead(blue1[x], y )) digitalWrite(blue, 1);
-else digitalWrite(blue, 0);
+if ((blue1[x] & y ) == false) digitalWrite(blue, 0);
+else digitalWrite(blue, 1);
+
 
 digitalWrite(clock, 1);
 digitalWrite(clock, 0);
 
-y++;
+y = y << 1;
 
-//delay(100);
-
-} while (y<8);
+} while (y < 129);   // 8 Bits
 
 x++;
 
-} while (x<16);
+} while (x<8); // 1 Zeile
 
-delayMicroseconds(1);
-digitalWrite(latch, 1);
-delayMicroseconds(1);
-digitalWrite(latch, 0);
-delayMicroseconds(1);
 digitalWrite(outen, 1);
+delayMicroseconds(10);
+digitalWrite(latch, 1);
+delayMicroseconds(10);
+digitalWrite(outen, 0);
+delayMicroseconds(10);
+digitalWrite(latch, 0);
 
-// delay(1000);
+delay(1000);
+
+z++;
+
+} while (z < 16);
+
 
  }  
 }
